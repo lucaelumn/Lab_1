@@ -1,0 +1,81 @@
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+// Функция для отображения игрового поля
+void displayBoard(const array<array<char, 3>, 3>& board) {
+    for (const auto& row : board) {
+        for (char cell : row) {
+            cout << cell << " ";
+        }
+        cout << endl;
+    }
+}
+
+// Функция для проверки выигрыша
+bool checkWin(const array<array<char, 3>, 3>& board, char symbol) {
+    // Проверка строк и столбцов
+    for (int i = 0; i < 3; ++i) {
+        if ((board[i][0] == symbol && board[i][1] == symbol && board[i][2] == symbol) ||
+            (board[0][i] == symbol && board[1][i] == symbol && board[2][i] == symbol)) {
+            return true;
+        }
+    }
+    // Проверка диагоналей
+    if ((board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) ||
+        (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol)) {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    array<array<char, 3>, 3> board = { { {' ', ' ', ' '},
+                                         {' ', ' ', ' '},
+                                         {' ', ' ', ' '} } };
+    bool player1Turn = true;
+    int row, col;
+    
+    // Игровой цикл
+    for (int i = 0; i < 9; ++i) {
+        displayBoard(board);
+        if (player1Turn) {
+            cout << "Ход игрока 1 (X). Введите строку (0-2) и столбец (0-2): ";
+        } else {
+            cout << "Ход игрока 2 (O). Введите строку (0-2) и столбец (0-2): ";
+        }
+        cin >> row >> col;
+
+        if (row < 0 || row > 2 || col < 0 || col > 2 || board[row][col] != ' ') {
+            cout << "Некорректный ход. Попробуйте еще раз." << endl;
+            --i;
+            continue;
+        }
+
+        if (player1Turn) {
+            board[row][col] = 'X';
+            if (checkWin(board, 'X')) {
+                displayBoard(board);
+                cout << "Игрок 1 победил! Поздравляем!" << endl;
+                break;
+            }
+        } else {
+            board[row][col] = 'O';
+            if (checkWin(board, 'O')) {
+                displayBoard(board);
+                cout << "Игрок 2 победил! Поздравляем!" << endl;
+                break;
+            }
+        }
+        
+        player1Turn = !player1Turn;
+    }
+
+    if (!checkWin(board, 'X') && !checkWin(board, 'O')) {
+        displayBoard(board);
+        cout << "Ничья!" << endl;
+    }
+
+    return 0;
+}
